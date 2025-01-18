@@ -1,0 +1,175 @@
+
+狗凯之家源码网 bygoukai.com bygoukai.com bygoukai.com
+
+
+测试环境：Linux系统CentOS7.6、宝塔面板、Nginx、PHP7.2、MySQL5.6，根目录public，伪静态laravel5，开启ssl证书
+
+语言：看图
+
+wap+pc的前端，很遗憾都是编译后的，要是有源码的话就有价值了，后端laravel5框架
+
+亲测k线结算功能正常，合约交易都是完整的，基本上所有功能都测试了一遍，暂时没有遇到问题
+
+有质押生息功能、还可以发行平台币，控制平台币k线走势，币币交易也有机器人
+
+整个目录全局搜索 jys110.bygoukai.com 替换为自己的域名，数据库里面也要替换域名
+
+数据库修改：.env 里面的 timibbs_jys110
+
+跨域：/proxy/proxy.js 将 jys110.bygoukai.com 替换为自己的域名，也可以不用管，这是跨域才用得到的
+
+安装php扩展  fileinfo opcache redis imagemagick imap  intl  xsl Swoole4并且禁用所有函数
+
+部署好之后先清除程序缓存
+cd /www/wwwroot/jys110.bygoukai.com
+php artisan config:cache
+
+jys110.bygoukai.com是你自己的程序目录
+
+nginx站点配置反向代理：
+location ~/(wss|socket.io) {
+     # 此处改为 socket.io 后端的 ip 和端⼝即可
+     proxy_pass http://127.0.0.1:2000;
+     proxy_set_header Upgrade $http_upgrade;
+     proxy_set_header Connection "upgrade";
+     proxy_http_version 1.1;
+     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+     proxy_set_header Host $host;
+}
+
+宝塔要放行所有端口哦！
+
+环境部署教程和计划任务在压缩包里面，就不写出来了
+
+前端wap：https://jys110.bygoukai.com/mobile
+前端pc：https://jys110.bygoukai.com/app
+测试账号：timibbs
+密码：123456
+
+后台：https://jys110.bygoukai.com/timibbs
+账号：timibbs
+密码：bygoukai.com
+
+
+
+环境搭建教程 
+
+ 安装es 网站根目录运行终端命令执行下列命令
+1.
+yum install java -y
+
+
+2.
+----------------------------es--------------------------
+安装es 
+
+rpm --import https://artifacts.elastic.co/GPG-KEY-elasticsearch
+vi /etc/yum.repos.d/elasticsearch.repo
+
+3.插入下面代码
+
+[elasticsearch-7.x]
+name=Elasticsearch repository for 7.x packages
+baseurl=https://artifacts.elastic.co/packages/7.x/yum
+gpgcheck=1
+gpgkey=https://artifacts.elastic.co/GPG-KEY-elasticsearch
+enabled=1
+autorefresh=1
+type=rpm-md
+
+
+shift+：  输入wq回车保存 
+
+5.
+yum install elasticsearch
+
+6.启动
+
+service elasticsearch start
+------------------------------------------------------
+
+安装python3和扩展 
+yum install python3 -y 
+
+pip3 install websocket-client redis
+
+
+php artisan config:cache
+------------------------------------------------------
+计划任务添加脚本 然后执行
+
+k线依赖
+
+webmsgsender
+cd /www/wwwroot/jys110.bygoukai.com/public/vendor/webmsgsender
+php start.php restart -d
+
+
+python3
+killall python3
+cd /www/wwwroot/jys110.bygoukai.com/python 
+python3 main.py
+
+websocket
+cd /www/wwwroot/jys110.bygoukai.com
+php artisan websocket:client restart
+
+
+主要添加执行上面三个，下面看交易所功能在执行适合脚本
+
+schedule
+cd /www/wwwroot/jys110.bygoukai.com
+php artisan schedule:run
+
+queue
+cd /www/wwwroot/jys110.bygoukai.com
+php artisan queue:work
+
+
+auto_change
+cd /www/wwwroot/jys110.bygoukai.com
+php artisan auto_change start
+
+平台币依赖
+
+get_kline_data_weekly
+cd /www/wwwroot/jys110.bygoukai.com
+php artisan get_kline_data_weekly
+
+
+get_kline_data_daily
+cd /www/wwwroot/jys110.bygoukai.com
+php artisan get_kline_data_daily
+
+get_kline_data_hourly
+cd /www/wwwroot/jys110.bygoukai.com
+php artisan get_kline_data_hourly
+
+
+get_kline_data_monthly
+cd /www/wwwroot/jys110.bygoukai.com
+php artisan get_kline_data_monthly
+
+
+get_kline_data_thirtymin
+cd /www/wwwroot/jys110.bygoukai.com
+php artisan get_kline_data_thirtymin
+
+get_kline_data_fifteenmin
+cd /www/wwwroot/jys110.bygoukai.com
+php artisan get_kline_data_fifteenmin
+
+
+get_kline_data_fivemin
+cd /www/wwwroot/jys110.bygoukai.com
+php artisan get_kline_data_fivemin
+
+
+机器人
+robot
+cd /www/wwwroot/jys110.bygoukai.com
+php artisan robot 2
+
+
+delete from users_wallet where currency not in (select id from currency)
+
